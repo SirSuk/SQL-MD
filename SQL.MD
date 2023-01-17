@@ -7,7 +7,7 @@ https://www.youtube.com/watch?v=7S_tz1z_5bA
 ***
 
 <!-- Texto normal -->
-Son ejemplos de una base de datos real, en inglés, y no vais a ver la tabla, asique intentaré explicar lo mejor posible, es mi primera experiencia con algo asi que espero que os sirva!
+Son ejemplos de una base de datos real, en inglés, pondré pequeñas tablas para que entendamos el contexto e intentaré explicar lo mejor posible, es mi primera experiencia con algo asi que espero que os sirva!
 
 ---
 Vamos a usar una base de datos:
@@ -15,7 +15,19 @@ Vamos a usar una base de datos:
 USE sql_store
 ```
 La misma tendrá dentro varias tablas, como customers, por ejemplo.
-El siguiente comando nos la devuelve:
+
+---
+
+
+### TABLA CUSTOMERS
+
+| customer_id | first_name | last_name | birth_date | points | country | state |
+|-------------|------------|-----------|------------|--------|---------|-------|
+|       2     |   Jose     |   Lopez   | 1986-03-28 |  2500  |  'US'   |  'VA' |
+|       3     |   Graham   |   Gomez   | 1990-01-01 |  1500  |  'US'   |  'FL' |
+
+
+El siguiente comando nos la tabla completa:
 
 ```sql
 SELECT * FROM customers
@@ -413,7 +425,7 @@ FROM customers
 ORDER BY last_name
 ```
 
-Tenemos una tabla:
+Tenemos una tabla order_items:
 
 | order_id          | product_id  |     quantity  | unit_price |
 |-------------------|-------------|---------------|--------------|
@@ -481,3 +493,51 @@ LIMIT 3
 ```
 
 > <b>ATENCION: Limit siempre va al final, si no respetamos el orden las querys no funcionarán correctamente</b>
+
+
+---
+
+## INNER JOIN
+
+<code> En la vida real no solo seleccionas datos de una tabla, sino que puedes unir varias </code>
+
+Al principio hemos trabajado con nuestra tabla customers, que tenia datos como el id, nombre,cumpleaños, los puntos, etc :
+
+### TABLA CUSTOMERS
+
+| customer_id | first_name | last_name | birth_date | points | country | state |
+|-------------|------------|-----------|------------|--------|---------|-------|
+|       2     |   Jose     |   Lopez   | 1986-03-28 |  2500  |  'US'   |  'VA' |
+|       3     |   Graham   |   Gomez   | 1990-01-01 |  1500  |  'US'   |  'FL' |
+
+Ahora vamos a trabajar con nuestra tabla orders:
+
+### TABLA ORDERS
+
+| order_id          | customer_id  |  order_date  | 
+|-------------------|-------------|---------------|
+|          2        |      1      |      2        | 
+|          2        |      4      |      4        | 
+|          2        |      6      |      2        |
+
+> INFO: Si un cliente varia sus puntos, por ejemplo, los varia en la tabla customers, accedemos a ella desde ORDERS para lo que necesitemos, si estuvieran los datos en ambas nos volveriamos locos. Por eso tenemos tablas separadas
+
+En el INNER JOIN ( el INNER es opcional, podemos omitirlo)
+
+---
+
+> <b>EXPLICACION: Usamos el customer_id de esta tabla(ORDERS) para acceder a datos como birthdate,last_name etc de la tabla customers</b>
+>
+>
+
+Vamos a empezar a combinar estos datos de customers y orders:
+
+```sql
+SELECT * 
+FROM orders 
+JOIN customers 
+ON orders.customer_id = customers.customer_id
+```
+Aqui arriba le estamos diciendo: !Oye, uneme las tablas y asegurate de que los customer_id sean iguales en ambas!
+
+SELECT order_id, customer_id, first
