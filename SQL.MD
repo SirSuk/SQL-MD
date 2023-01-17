@@ -296,15 +296,127 @@ SELECT * FROM customers
 WHERE last name LIKE '%field%'
 ```
 
-REGEXP es mucho mas potente,y nos permite evitar el uso de esta nomenclatura, a mi personalmente me recuerdan a los 'bac tics', como los llamaba nuestro amigo Ivan :( .
+REGEXP es mucho mas potente,y nos permite evitar el uso de esta nomenclatura, lo que va dentro tiene sus propias normas, explicaremos algunas de las mas basicas:
+
 
 ```sql
 SELECT * FROM customers 
 WHERE last name REGEXP 'field'
 ```
-En regex tenemos caracteres especiales para jugar, por ejemplo la <b>'cedilla' (^) </b>, nos dice que la palabra tiene que empezar con field:
+Nos piden apellidos que empiezen con G...
+En regex tenemos caracteres especiales para jugar, por ejemplo la <b>'cedilla' (^) </b>, nos dice que la palabra tiene que empezar con 'G':
 
 ```sql
 SELECT * FROM customers 
-WHERE last name REGEXP 'field'
+WHERE last name REGEXP '^g' --Gomez,Gutierrez
 ```
+o el dolar al final para apellidos que terminen en o
+
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP 'o$' --
+```
+
+---
+
+Podemos usar <b>PIPES </b> para elegir unos u otros, como en js.
+
+Queremos nombres que tengan algo de esto, da igual donde:
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP 'MA|ME|HU' 
+```
+
+O tal vez necesitemos que empiezen con una de estas:
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP '^MA|ME|HU' 
+```
+---
+
+Vamos a explicar el uso de brackets []:
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP '[gim]e'
+```
+En el caso de arriba me devuelve todos los apellidos que tengan GE, IE o ME, es decir, las letras E se puede combinar con cualquiera de las que estan en el paréntesis.
+
+---
+Imagina que quiero apellidos que tengan la letra e seguida de f,r,m , pues lo hacemos al revés:
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP 'e[frm]' -- ge / ie / me
+```
+Ahora dame apellidos que tengan una F y delante de la misma cualquier letra entre la A y la H:
+```sql
+SELECT * FROM customers 
+WHERE last name REGEXP '[a-h]F' -- ge / ie / me
+```
+
+> <b>NOTA:esto se puede complicar hasta el infinito, hay mil y una combinaciones posibles para cualquier cosa, asique el que quiera.... continuamos con SQL</b>
+
+
+## IS NULL
+
+<code> Muy utilizado, para buscar propiedades vacias</code>
+
+Dame clientes que no tengan teléfono:
+
+```sql
+SELECT * FROM customers 
+WHERE phone IS NULL
+```
+
+Negandolo me da todos menos los vacios:
+
+```sql
+SELECT * FROM customers 
+WHERE phone IS NOT NULL
+```
+
+Tengo una tienda online y necesito los pedidos que no han sido enviados aun.
+Trabajaré en mi tabla ORDERS, en la que tengo datos como shipped_date, shipper_id
+
+```sql
+SELECT * FROM orders
+WHERE shipped_date IS NULL
+```
+
+## ORDER BY
+
+<code> Ordenar por, de forma descendente, ascendente etc</code>
+> NOTA: Por defecto los datos vienen ordenados por ID, porque es la PRIMARY KEY
+
+vamos a ordenar los customers por estado,y tambien por apellido.
+```sql
+SELECT * FROM customers 
+ORDER BY state, first_name
+```
+El funcionamiento es sencillo, primero nos ordena por estados, pero si en este estado hay mas de un customer, ordenará estos por sus apellidos...
+
+---
+
+Vamos a complicarlo un poco, ahora queremos de la tabla solo nombre y apellido, y queremos ordenar por apellido, hay una forma corta de hacerlo:
+
+```sql
+SELECT first_name, last_name 
+FROM customers 
+ORDER BY 2,1
+```
+Curioso, no ? Me recuerda al método <b>sort()</b> de los arrays javascript, damos la vuelta al 1 y al 2 para elegir según los parametros de arriba..
+
+Aun asi, no es recomendable porque puede producir resultados inesperados , solución:
+
+```sql
+SELECT first_name, last_name 
+FROM customers 
+ORDER BY last_name
+```
+
+Tenemos una tabla:
+
+| order_id          | product_id  |     quantity  | unit_price |
+|-------------------|-------------|---------------|--------------|
+|          2        |      1      | 2             | 9.10         |
+|          2        |      4      | 4             | 1.66         |
+|          2        |      6      | 2             | 2.94         |
