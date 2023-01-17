@@ -1,7 +1,7 @@
 <!-- Esto es un comentario -->
 
 <!-- Cabeceras -->
-# <code>SQL deadpool alternative auto-teach</code>
+# <code>SQL deadpool</code>
 #### Estos apuntes son un resumen del video de 3 horas de Mosh Hamedani. 
 https://www.youtube.com/watch?v=7S_tz1z_5bA
 ***
@@ -420,3 +420,64 @@ Tenemos una tabla:
 |          2        |      1      | 2             | 9.10         |
 |          2        |      4      | 4             | 1.66         |
 |          2        |      6      | 2             | 2.94         |
+
+Basandonos en estos datos, imaginad que nos piden que devolvamos los registros con order_id 2 , y que mostremos su precio total, ordenados de forma descendente:
+
+
+```sql
+SELECT *, quantity * unit_price AS total_price
+FROM order_items
+WHERE order_id = 2 
+ORDER BY quantity * unit_price DESC
+```
+Si os fijais, estamos creando el campo total_price, al cual le asignamos la multiplicacion de cantidad x precio unitario.
+
+Esto lo podemos refactorizar, en la ultima linea usamos el total_price que hemos creado:
+
+```sql
+SELECT *, quantity * unit_price AS total_price
+FROM order_items
+WHERE order_id = 2 
+ORDER BY total_price DESC
+```
+
+
+## LIMIT
+
+<code> Queremos limitar los resultado obtenidos</code>
+
+Quiero que me devuelvas solo 3 clientes
+
+```sql
+SELECT * 
+FROM customers 
+LIMIT 3
+```
+
+Quiero paginar mi web, y obtener por ejemplo 3 registros por cada una de las paginas(
+       pagina 1 : del 3
+       pagina 2 : del 4 a la 6
+       pagina 3 : del 7 a la 9
+ )
+
+
+```sql
+SELECT * 
+FROM customers 
+LIMIT 6,3
+```
+
+En el caso de arriba al 6 se le llama "offset", le estamos diciendo que lo omita y que me de los 3 valores siguientes (7,8,9)
+
+---
+Nos preguntan por los 3 customers mas leales (o con mas puntos )
+
+
+```sql
+SELECT * 
+FROM customers 
+ORDER BY points DESC
+LIMIT 3
+```
+
+> <b>ATENCION: Limit siempre va al final, si no respetamos el orden las querys no funcionarán correctamente</b>
